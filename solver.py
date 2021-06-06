@@ -24,7 +24,7 @@ def get_dummies(puzzle):
   
   for i in range(9):
     for j in range(9):
-      if dummy_puzzle[i][j] != "0":
+      if dummy_puzzle[i][j] != "0": 
         continue
   
       box_no, box_ind = box_info(i, j)
@@ -164,34 +164,33 @@ def is_complete(puzzle):
   return False
 
 
-def search_value(puzzle, dummy_puzzle):
+def search_value(puzzle, dummy_puzzle, order = 1):
   
+  count = 1
   for len_curr in range(2,10):
     for i in range(9):
       for j in range(9):
         if len(dummy_puzzle[i][j]) != len_curr:
           continue
         
-        return i, j, len_curr
+        if count == order:
+          return i, j, len_curr
+        
+        else: count += 1
 
 
-def test_guess(puzzle, dummy_puzzle, layer = 1):
-  #print("entering layer", layer)
-  row, col, len_curr = search_value(puzzle, dummy_puzzle) 
+def test_guess(puzzle, dummy_puzzle, layer = 1, order = 1):
+  puzzle_org = puzzle.copy()
+  dummy_org = dummy_puzzle.copy()
+  row, col, len_curr = search_value(puzzle, dummy_puzzle, order) 
   if len_curr == None:
     return puzzle
   
   checkpoint, checkpoint_dummy = puzzle.copy(), dummy_puzzle.copy()
   
   for pos in range(len_curr):
-    if layer == 1:
-      print(row, col)
     if pos >= len(dummy_puzzle[row][col]):
       continue
-    #print("pos:", pos)
-    #print("len:", len_curr)
-    #print("rc:", row, col)
-    #print("val:", dummy_puzzle[row][col])
     dummy_puzzle[row][col] = dummy_puzzle[row][col].replace(dummy_puzzle[row][col], dummy_puzzle[row][col][pos])
     puzzle, dummy_puzzle = update_puzzle(puzzle,dummy_puzzle)
     if is_valid(puzzle, dummy_puzzle):
@@ -209,29 +208,26 @@ def test_guess(puzzle, dummy_puzzle, layer = 1):
           return puzzle
             
     puzzle, dummy_puzzle = checkpoint, checkpoint_dummy
-    #print_grid(checkpoint_dummy)
-    #print("exiting layer", layer)
-    
     continue
 
-  
 
- 
 def solve(unsolved):
   dummy_puzzle = get_dummies(unsolved)
-  print_grid(dummy_puzzle)
   checkpoint, checkpoint_dummy = update_puzzle(unsolved, dummy_puzzle)
   if is_complete(checkpoint):
-    print("complete")
-    return checkpoint
+    print("solved")
+    return True, checkpoint
   
   checkpoint, checkpoint_dummy = find_individuals(checkpoint, checkpoint_dummy)
   if is_complete(checkpoint):
-    print("complete")
-    return checkpoint
-  
-  print(is_valid(checkpoint, checkpoint))
+    print("solved")
+    return True, checkpoint
+
   
   solved = test_guess(checkpoint, checkpoint_dummy)
-  print_grid(solved)
-  print(is_valid(solved, solved), is_complete(solved)) 
+  if solved is None:
+    print("not solved")
+    return False
+  
+  print("solved")
+  return True, solved
