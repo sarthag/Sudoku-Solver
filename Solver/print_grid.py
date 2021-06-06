@@ -12,13 +12,25 @@ def align(text):
     return text
     
     
-def print_grid(array):
+def print_intermediate_grid(array):
     arr = array.reshape((9,9))
-    print("-"*84)
+    print(" " + "-"*83)
     for i in range(9):
         print("|", end = "") 
         for j in range(9):
             print(align(arr[i][j]), end = "")
             if j%3 == 2: print("|", end = "") 
         print()    
-        if i%3 == 2: print("-"*84)
+        if i%3 == 2: print(" " + "-"*83)
+        
+
+def print_grid(array):
+    arr = array.reshape((9,9))
+    print(" " + "-"*35)
+    for i in range(9):
+        print("|", end = "  ")
+        for j in range(9):
+            print(arr[i][j], end = "  ")
+            if j%3 == 2: print("|", end = "  ") 
+        print()   
+        if i%3 == 2: print(" " + "-"*35)
