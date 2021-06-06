@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd 
 from solver import *
 from print_grid import print_grid
+import time
 
 
 unsolved = np.array([[0, 0, 4, 3, 0, 0, 2, 0, 9],
@@ -15,16 +16,34 @@ unsolved = np.array([[0, 0, 4, 3, 0, 0, 2, 0, 9],
                      [0, 4, 2, 9, 1, 0, 3, 0, 0]])
 
 unsolved = unsolved.astype(str)
-#solve(unsolved)
+#unsolved[0][0] = unsolved[0][0].replace(unsolved[0][0], "")
+#print(is_valid(unsolved, unsolved))
 
+#solve(unsolved)
+def make_array(grid):
+    sudoku = [i for i in grid]
+    for i in range(81):
+        if sudoku[i] == ".":
+            sudoku[i] ="0"
+    sudoku = np.int_(sudoku).reshape((9,9))  
+    sudoku = sudoku.astype(str)
+    return sudoku
+    
+    
 grid2 = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
-unsolved2 = [i for i in grid2]
-for i in range(81):
-    if unsolved2[i] == ".":
-        unsolved2[i] ="0"
+unsolved2 = make_array(grid2)
+print(unsolved2)
+
+hard1  = '.....6....59.....82....8....45........3........6..3.54...325..6..................'
+hard01 = make_array(hard1)
+print(hard01)
+
+impossible = "85...24..72......9..4.........1.7..23.5...9...4...........8..7..17..........36.4."
+impossible1 = make_array(impossible)
+
+start = time.process_time()
+solve(impossible1)
+end = time.process_time()
+print("time: ", end - start)
 
 
-unsolved2 = np.int_(unsolved2).reshape((9,9))  
-unsolved2 = unsolved2.astype(str)
-
-#solve(unsolved)
