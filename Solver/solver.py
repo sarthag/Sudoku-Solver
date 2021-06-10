@@ -1,5 +1,4 @@
 import numpy as np
-from print_grid import print_grid
 
 
 grps = [(0,1,2), (3,4,5), (6,7,8)]
@@ -20,11 +19,15 @@ def box_info(row, col):
 def get_dummies(puzzle):
   
   #returns an array with the possible entries in each box
-  dummy_puzzle = puzzle.copy()  
+  dummy_puzzle = puzzle.copy() 
+  for i in range(9):
+    for j in range(9):
+      if len(puzzle[i][j]) != 1:
+        puzzle[i][j] = '0' 
   
   for i in range(9):
     for j in range(9):
-      if dummy_puzzle[i][j] != "0": 
+      if dummy_puzzle[i][j] != "0":  
         continue
   
       box_no, box_ind = box_info(i, j)
@@ -46,8 +49,7 @@ def get_dummies(puzzle):
        
   
 def update_puzzle(puzzle, dummy_puzzle):
-  
-  
+
   checkpoint, checkpoint_dummy = puzzle.copy(), dummy_puzzle.copy()
 
   #updating dummies
@@ -177,6 +179,8 @@ def search_value(puzzle, dummy_puzzle, order = 1):
           return i, j, len_curr
         
         else: count += 1
+  
+  return None, None, None
 
 
 def test_guess(puzzle, dummy_puzzle, layer = 1, order = 1):
@@ -214,12 +218,12 @@ def test_guess(puzzle, dummy_puzzle, layer = 1, order = 1):
 def solve(unsolved):
   dummy_puzzle = get_dummies(unsolved)
   checkpoint, checkpoint_dummy = update_puzzle(unsolved, dummy_puzzle)
-  if is_complete(checkpoint):
+  if is_valid(checkpoint, checkpoint_dummy) and is_complete(checkpoint):
     print("solved")
     return True, checkpoint
   
   checkpoint, checkpoint_dummy = find_individuals(checkpoint, checkpoint_dummy)
-  if is_complete(checkpoint):
+  if is_valid(checkpoint, checkpoint_dummy) and is_complete(checkpoint):
     print("solved")
     return True, checkpoint
 
@@ -227,7 +231,12 @@ def solve(unsolved):
   solved = test_guess(checkpoint, checkpoint_dummy)
   if solved is None:
     print("not solved")
-    return False
+    return False, None
   
-  print("solved")
-  return True, solved
+  if is_complete(solved) and is_valid(solved, get_dummies(solved)):
+    print("solved")
+    return True, solved
+  
+  else: 
+    print("not solved")
+    return False, None
