@@ -1,5 +1,5 @@
 import numpy as np
-from  Extract_Sudoku import *
+from  Extract_Digits import *
 from Solver.solver import *
 
 
