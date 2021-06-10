@@ -13,6 +13,12 @@ def align(text):
     
     
 def print_intermediate_grid(array):
+    
+    if array is None:
+        print("SUdoku not Solved")
+        return None
+        
+        
     arr = array.reshape((9,9))
     print(" " + "-"*83)
     for i in range(9):
@@ -24,7 +30,14 @@ def print_intermediate_grid(array):
         if i%3 == 2: print(" " + "-"*83)
         
 
+
 def print_grid(array):
+    
+    if array is None:
+        print("SUdoku not Solved")
+        return None
+        
+        
     arr = array.reshape((9,9))
     print(" " + "-"*35)
     for i in range(9):
