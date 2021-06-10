@@ -219,24 +219,19 @@ def solve(unsolved):
   dummy_puzzle = get_dummies(unsolved)
   checkpoint, checkpoint_dummy = update_puzzle(unsolved, dummy_puzzle)
   if is_valid(checkpoint, checkpoint_dummy) and is_complete(checkpoint):
-    print("solved")
     return True, checkpoint
   
   checkpoint, checkpoint_dummy = find_individuals(checkpoint, checkpoint_dummy)
   if is_valid(checkpoint, checkpoint_dummy) and is_complete(checkpoint):
-    print("solved")
     return True, checkpoint
 
   
   solved = test_guess(checkpoint, checkpoint_dummy)
   if solved is None:
-    print("not solved")
     return False, None
   
   if is_complete(solved) and is_valid(solved, get_dummies(solved)):
-    print("solved")
     return True, solved
   
   else: 
-    print("not solved")
     return False, None
