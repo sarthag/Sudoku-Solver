@@ -1,5 +1,6 @@
 import numpy as np
 import cv2 
+from joblib import load
 
 
 def order_corners(corner_values):
@@ -224,3 +225,18 @@ def get_digits(sudoku):
     digits = np.array(digits).reshape(9, 9, 28, 28)
             
     return digits
+
+
+
+def extract_digit_values(sudoku_image_path, classifier_model_path):
+    
+    #Takes in an image and a joblib model, extracts the sudoku puzzle from it
+    #Returns an array of digits to be run through the solver
+    
+    model = load(classifier_model_path)
+    sudoku = extract_sudoku(sudoku_image_path)
+    digits = (get_digits(sudoku)/256).reshape(81, 784)
+    predicted_digit_values = (model.predict(digits)).reshape(9,9)
+    unsolved_sudoku = predicted_digit_values.astype(str)
+    
+    return unsolved_sudoku 
