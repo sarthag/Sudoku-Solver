@@ -1,6 +1,5 @@
 import numpy as np
 
-
 grps = [(0,1,2), (3,4,5), (6,7,8)]
 box_indexes = [[(i,j) for i in r for j in c] for r in grps for c in grps]
   
@@ -11,7 +10,7 @@ def box_info(row, col):
   #Returns the box number and position in the box array
   
   box_no = int((row/3))*3 + int(col/3)
-  index_in_box = (row%3)*3 + col%3
+  index_in_box = (row%3)*3 + col%3  
    
   return box_no, index_in_box    
 
@@ -141,10 +140,10 @@ def is_valid(puzzle, dummy_puzzle):
     
     col_count = np.unique(puzzle_cols[i], return_counts = True)
     if col_count[0][0] == "0":
-      if True in (row_count[1][1:] > 1):
+      if True in (col_count[1][1:] > 1):
         return False
     else:
-      if True in (row_count[1] > 1):
+      if True in (col_count[1] > 1):
         return False
       
     box = box_indexes[i]
@@ -156,7 +155,7 @@ def is_valid(puzzle, dummy_puzzle):
     else:
       if True in (box_count[1] > 1):
         return False
-      
+  
   return True 
     
   
@@ -166,36 +165,31 @@ def is_complete(puzzle):
   return False
 
 
-def search_value(puzzle, dummy_puzzle, order = 1):
+def search_value(puzzle, dummy_puzzle):
   
-  count = 1
   for len_curr in range(2,10):
     for i in range(9):
       for j in range(9):
         if len(dummy_puzzle[i][j]) != len_curr:
           continue
         
-        if count == order:
-          return i, j, len_curr
-        
-        else: count += 1
+      
+        return i, j, len_curr
   
   return None, None, None
 
 
-def test_guess(puzzle, dummy_puzzle, layer = 1, order = 1):
-  puzzle_org = puzzle.copy()
-  dummy_org = dummy_puzzle.copy()
-  row, col, len_curr = search_value(puzzle, dummy_puzzle, order) 
+def test_guess(puzzle, dummy_puzzle, checkpoints = {}, layer = 1):
+  
+  row, col, len_curr = search_value(puzzle, dummy_puzzle) 
   if len_curr == None:
     return puzzle
   
-  checkpoint, checkpoint_dummy = puzzle.copy(), dummy_puzzle.copy()
+  checkpoints[layer] = puzzle.copy(), dummy_puzzle.copy()
   
-  for pos in range(len_curr):
-    if pos >= len(dummy_puzzle[row][col]):
-      continue
-    dummy_puzzle[row][col] = dummy_puzzle[row][col].replace(dummy_puzzle[row][col], dummy_puzzle[row][col][pos])
+  for value in dummy_puzzle[row][col]:
+    dummy_puzzle[row][col] = value
+
     puzzle, dummy_puzzle = update_puzzle(puzzle,dummy_puzzle)
     if is_valid(puzzle, dummy_puzzle):
       
@@ -207,11 +201,12 @@ def test_guess(puzzle, dummy_puzzle, layer = 1, order = 1):
         if is_complete(puzzle):
           return puzzle
 
-        puzzle = test_guess(puzzle, dummy_puzzle, layer + 1)
+        puzzle = test_guess(puzzle, dummy_puzzle, checkpoints=checkpoints, layer = layer+1)
+
         if puzzle is not None:
           return puzzle
-            
-    puzzle, dummy_puzzle = checkpoint, checkpoint_dummy
+         
+    puzzle, dummy_puzzle = checkpoints[layer]
     continue
 
 
@@ -230,7 +225,7 @@ def solve(unsolved):
   if solved is None:
     return False, None
   
-  if is_complete(solved) and is_valid(solved, get_dummies(solved)):
+  if is_complete(solved) and is_valid(solved, solved):
     return True, solved
   
   else: 
