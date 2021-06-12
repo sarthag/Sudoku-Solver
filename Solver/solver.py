@@ -18,6 +18,7 @@ def box_info(row, col):
 def get_dummies(puzzle):
   
   #returns an array with the possible entries in each box
+  
   dummy_puzzle = puzzle.copy() 
   for i in range(9):
     for j in range(9):
@@ -48,10 +49,12 @@ def get_dummies(puzzle):
        
   
 def update_puzzle(puzzle, dummy_puzzle):
+  
+  #Function to recursively update dummy values in the puzzle based on neighbours
+  #Returns a puzzle with minimum number of possible probales
 
   checkpoint, checkpoint_dummy = puzzle.copy(), dummy_puzzle.copy()
 
-  #updating dummies
   for i in range(9):
     for j in range(9):
       if len(dummy_puzzle[i][j]) != 1:
@@ -79,6 +82,9 @@ def update_puzzle(puzzle, dummy_puzzle):
 
 
 def find_individuals(puzzle, dummy_puzzle):
+  
+  #Finds any location which is the only possible loction for a number in a row, column or box
+  #And assigns said value to the box 
   
   checkpoint = dummy_puzzle.copy()
   for i in range(9):
@@ -121,6 +127,8 @@ def find_individuals(puzzle, dummy_puzzle):
 
 def is_valid(puzzle, dummy_puzzle):
 
+  #Checks validity of the puzzle by checking whether there are duplicates in rows, clouns and boxes
+  
   for i in range(9):
     for j in range(9):
       if dummy_puzzle[i][j] is None or len(dummy_puzzle[i][j]) == 0:
@@ -160,6 +168,9 @@ def is_valid(puzzle, dummy_puzzle):
     
   
 def is_complete(puzzle):
+  
+  #Checks whether all values in the puzzle are filled 
+  
   if "0" not in puzzle:
     return True
   return False
@@ -167,12 +178,13 @@ def is_complete(puzzle):
 
 def search_value(puzzle, dummy_puzzle):
   
+  #Finds the box with least number of probables to make a guess
+  
   for len_curr in range(2,10):
     for i in range(9):
       for j in range(9):
         if len(dummy_puzzle[i][j]) != len_curr:
           continue
-        
       
         return i, j, len_curr
   
@@ -180,6 +192,10 @@ def search_value(puzzle, dummy_puzzle):
 
 
 def test_guess(puzzle, dummy_puzzle, checkpoints = {}, layer = 1):
+  
+  #Substitues probable values in a chosen box and tests implications
+  #Follows Backtracking to make guesses and attempts to minimize 
+  #Guesses needed by attempting to completely sove the puzzle after each guess
   
   row, col, len_curr = search_value(puzzle, dummy_puzzle) 
   if len_curr == None:
@@ -211,6 +227,9 @@ def test_guess(puzzle, dummy_puzzle, checkpoints = {}, layer = 1):
 
 
 def solve(unsolved):
+  
+  #Final implementation of algorthim
+  
   dummy_puzzle = get_dummies(unsolved)
   checkpoint, checkpoint_dummy = update_puzzle(unsolved, dummy_puzzle)
   if is_valid(checkpoint, checkpoint_dummy) and is_complete(checkpoint):
@@ -220,7 +239,6 @@ def solve(unsolved):
   if is_valid(checkpoint, checkpoint_dummy) and is_complete(checkpoint):
     return True, checkpoint
 
-  
   solved = test_guess(checkpoint, checkpoint_dummy)
   if solved is None:
     return False, None
