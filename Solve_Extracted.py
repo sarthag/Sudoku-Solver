@@ -1,6 +1,15 @@
 import numpy as np
 from  Extract_Digits import *
 from Solver.solver import *
+from Solver.print_grid import *
+
+
+def modified_where(array):
+    
+    arr = np.where(array)
+    indexes = np.column_stack((arr[0], arr[1]))
+    return indexes
+    
 
 
 def solve_sudoku(sudoku_image_path):
@@ -21,12 +30,19 @@ def solve_sudoku(sudoku_image_path):
     solved, solved_sudoku = solve(unsolved3.copy())
     if solved: return solved_sudoku
 
-    faults = list(np.where(unsolved1 != unsolved2)) + list(np.where(unsolved2 != unsolved3)) + list(np.where(unsolved3 != unsolved1))
+    faults = list(modified_where(unsolved1 != unsolved2)) + list(modified_where(unsolved2 != unsolved3)) + list(modified_where(unsolved3 != unsolved1))
     unsolved = unsolved1.copy()
+    
     for idx in faults:
         entry = ""
-        possible = set([unsolved1[idx[0], idx[1]], unsolved2[idx[0], idx[1]], unsolved3[idx[0], idx[1]]] )
-        for i in possible: entry = entry + i 
+        possible = unsolved1[idx[0], idx[1]] + unsolved2[idx[0], idx[1]] + unsolved3[idx[0], idx[1]]
+        for i in possible: 
+            if i == "0":
+                entry = "0"
+                break
+            if i not in entry:
+                entry = entry + i 
+        
         unsolved[idx[0], idx[1]] = entry
 
     solved, solved_sudoku = solve(unsolved.copy())
