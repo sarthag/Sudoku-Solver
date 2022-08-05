@@ -11,7 +11,8 @@ Frameworks used: Python, NumPy, ScikitLearn, OpenCV
 
 EXTRACTION OF DIGITS FROM SUDOKU IMAGE (OpenCV):
 
-This is done using ExtractDigits,py
+This is done using ExtractDigits.py
+
 ![image](https://user-images.githubusercontent.com/74304695/183119051-a4f628aa-5536-491e-bdfd-4be5e15e3f4e.png)
 
 The order corners function returns the corners of the puzzle in an ordered fashion.
